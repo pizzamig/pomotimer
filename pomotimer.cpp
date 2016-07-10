@@ -15,7 +15,9 @@ pomotimer::Config::Config() : focus( 25*60 ), shortBreak( 5*60 ),
 pomotimer::Pomodoro::Pomodoro(Config &c) : type(FOCUS), time(25), loopCounter(0),
 	localConfig( c )
 {
-	time=c.getFocus();
+	time = c.getFocus();
+	mutex = PTHREAD_MUTEX_INITIALIZER;
+	cond = PTHREAD_COND_INITIALIZER;
 }
 
 void
@@ -48,3 +50,15 @@ pomotimer::Pomodoro::update()
 	--time;
 }
 
+#if 1
+void
+secTimer(union sigval si)
+{
+	pomotimer::Pomodoro * pomo=(pomotimer::Pomodoro *)si.sival_ptr;
+	pthread_mutex_lock( pomo->getMutex() );
+	pomo->update();
+	pthread_cond_signal( pomo->getCond() );
+	pthread_mutex_unlock( pomo->getMutex() );
+	return;
+}
+#endif

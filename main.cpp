@@ -2,7 +2,6 @@
 #include <signal.h>
 #include <err.h>
 #include <sysexits.h>
-#include <signal.h>
 #include <pthread.h>
 
 #include "pomotimer.h"
@@ -25,6 +24,15 @@ second_thread(union sigval si)
 	pthread_mutex_unlock( &mutex );
 	std::cout << "still " << timeLeft << " left " << std::endl;
 	return;
+}
+
+void
+cli_init()
+{
+	initscr();
+	raw();
+	keypad(stdscr, TRUE);
+	noecho();
 }
 
 int main()

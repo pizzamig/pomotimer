@@ -1,5 +1,7 @@
 #pragma once
 #include <stdint.h>
+#include <pthread.h>
+#include <signal.h>
 
 namespace pomotimer {
 
@@ -29,11 +31,15 @@ public:
 	uint32_t getTime() const { return time; }
 	void update();
 	Timer getTimerType() const { return type; }
+	pthread_mutex_t * getMutex() { return &mutex; }
+	pthread_cond_t * getCond() { return &cond; }
 private:
 	Timer type;
 	uint32_t time;
 	uint32_t loopCounter; // short break counter
 	Config & localConfig;
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
 };
 
 } // namespace
