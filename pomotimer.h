@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <pthread.h>
+#include <time.h>
 #include <signal.h>
 
 namespace pomotimer {
@@ -23,7 +24,6 @@ private:
 };
 
 enum Timer { FOCUS, SHORT_BREAK, LONG_BREAK };
-enum Status { RUN, STOP };
 
 class Pomodoro {
 public:
@@ -40,6 +40,31 @@ private:
 	Config & localConfig;
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
+};
+
+class Pomotimer {
+public:
+	Pomotimer( Config & );
+	~Pomotimer();
+	void start();
+	void stop();
+	void pause();
+private:
+	static void* mainThread( void * );
+	static void timerThread( union sigval si );
+	enum Status { RUN, STOP, EXIT };
+	Status is; // internal status
+	Status ns; // new status
+	Config & conf;
+	Pomodoro pomo;
+	pthread_t tid;
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
+	// sigevent section
+	timer_t timerId;
+	struct itimerspec ts;
+	struct sigevent se;
+	
 };
 
 } // namespace

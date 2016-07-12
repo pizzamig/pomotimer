@@ -1,5 +1,5 @@
 CXX=clang++
-LDFLAGS+=-lrt -lncurses -L/usr/local/lib
+LDFLAGS+=-lrt -lncurses -lpthread -L/usr/local/lib
 CFLAGS+=-Wall -std=c++11 -g -O0
 
 pomotimer: main.cpp pomotimer.cpp pomotimer.h
