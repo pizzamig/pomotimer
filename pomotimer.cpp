@@ -12,17 +12,27 @@ pomotimer::Config::Config() : focus( 25*60 ), shortBreak( 5*60 ),
 	longBreak( 20*60 ), loopSize( 4 )
 {}
 
-pomotimer::Pomodoro::Pomodoro(Config &c) : type(FOCUS), time(25), loopCounter(0),
+pomotimer::Pomodoro::Pomodoro(Config &c) : type(FOCUS), time(c.getFocus()), loopCounter(0),
 	localConfig( c )
 {
-	time = c.getFocus();
 	mutex = PTHREAD_MUTEX_INITIALIZER;
 	cond = PTHREAD_COND_INITIALIZER;
 }
 
 void
+pomotimer::Pomodoro::reset()
+{
+	pthread_mutex_lock( &mutex );
+	time = localConfig.getFocus();
+	type = FOCUS;
+	loopCounter = 0;
+	pthread_mutex_unlock( &mutex );
+}
+
+void
 pomotimer::Pomodoro::update()
 {
+	pthread_mutex_lock( &mutex );
 	if( time == 0 ) {
 		// change the timer type
 		switch( type ) {
@@ -48,6 +58,7 @@ pomotimer::Pomodoro::update()
 		}
 	}
 	--time;
+	pthread_mutex_unlock( &mutex );
 }
 
 pomotimer::Pomotimer::Pomotimer(Config &c)
@@ -55,6 +66,7 @@ pomotimer::Pomotimer::Pomotimer(Config &c)
 {
 	mutex = PTHREAD_MUTEX_INITIALIZER;
 	cond = PTHREAD_COND_INITIALIZER;
+	obs_mutex = PTHREAD_MUTEX_INITIALIZER;
 	/*
 	Set the sigevent structure to cause the signal to be
 	delivered by creating a new thread.
@@ -88,13 +100,20 @@ pomotimer::Pomotimer::mainThread( void * arg )
 		}
 		switch(p->ns) {
 			case RUN:
+				p->ts.it_value.tv_sec = 1;
+				p->ts.it_interval.tv_sec = 1;
 				timer_settime( p->timerId, 0, &(p->ts), 0 );
 				break;
 			case STOP:
 				p->ts.it_value.tv_sec = 0;
 				p->ts.it_interval.tv_sec = 0;
 				timer_settime( p->timerId, 0, &(p->ts), 0 );
+				p->pomo.reset();
 				break;
+			case PAUSE:
+				p->ts.it_value.tv_sec = 0;
+				p->ts.it_interval.tv_sec = 0;
+				timer_settime( p->timerId, 0, &(p->ts), 0 );
 			case EXIT:
 				break;
 		}
@@ -107,9 +126,6 @@ pomotimer::Pomotimer::mainThread( void * arg )
 void
 pomotimer::Pomotimer::start()
 {
-// 	if( tid == nullptr ) {
-// 		pthread_create( tid, NULL, mainThread, this );
-// 	}
 	pthread_mutex_lock( &mutex );
 	ns = RUN;
 	pthread_cond_signal( &cond );
@@ -129,25 +145,50 @@ void
 pomotimer::Pomotimer::pause()
 {
 	pthread_mutex_lock( &mutex );
-	ns = STOP;
+	ns = PAUSE;
 	pthread_cond_signal( &cond );
 	pthread_mutex_unlock( &mutex );
 }
 
 pomotimer::Pomotimer::~Pomotimer()
 {
-// 	if( tid != nullptr ) {
-		pthread_mutex_lock ( &mutex );
-		ns = EXIT;
-		pthread_cond_signal( &cond );
-		pthread_mutex_unlock( &mutex );
-		pthread_join( tid, nullptr );
-// 	}
+	pthread_mutex_lock ( &mutex );
+	ns = EXIT;
+	pthread_cond_signal( &cond );
+	pthread_mutex_unlock( &mutex );
+	pthread_join( tid, nullptr );
+}
+
+void
+pomotimer::Pomotimer::addChangeTimerObs( changeTimerObs * o )
+{
+	if( o == nullptr ) {
+		return;
+	}
+	pthread_mutex_lock( &obs_mutex );
+	changeTimerObservers.push_back( o );
+	pthread_mutex_unlock( &obs_mutex );
+}
+
+void
+pomotimer::Pomotimer::allChangeTimerObsNotify(Timer t)
+{
+	pthread_mutex_lock( &obs_mutex );
+	for( auto it = changeTimerObservers.begin(); it != changeTimerObservers.end(); ++it ) {
+		(*it)->changeTimer(t);
+	}
+	pthread_mutex_unlock( &obs_mutex );
 }
 
 void
 pomotimer::Pomotimer::timerThread( union sigval si )
 {
 	Pomotimer * p = static_cast<Pomotimer *>(si.sival_ptr);
+	Timer tOld = p->pomo.getTimerType();
 	p->pomo.update();
+	Timer tNew = p->pomo.getTimerType();
+	if ( tOld == tNew ) {
+		return;
+	}
+	p->allChangeTimerObsNotify( tNew );
 }

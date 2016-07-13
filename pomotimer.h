@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <signal.h>
+#include <vector>
 
 namespace pomotimer {
 
@@ -30,6 +31,7 @@ public:
 	Pomodoro( Config &c );
 	uint32_t getTime() const { return time; }
 	void update();
+	void reset();
 	Timer getTimerType() const { return type; }
 	pthread_mutex_t * getMutex() { return &mutex; }
 	pthread_cond_t * getCond() { return &cond; }
@@ -42,6 +44,13 @@ private:
 	pthread_cond_t cond;
 };
 
+// change timer observer
+class changeTimerObs
+{
+public:
+	void virtual changeTimer( Timer t ) = 0;
+};
+
 class Pomotimer {
 public:
 	Pomotimer( Config & );
@@ -49,10 +58,13 @@ public:
 	void start();
 	void stop();
 	void pause();
+	uint32_t getTime() const { return pomo.getTime(); }
+	void addChangeTimerObs( changeTimerObs * o );
 private:
+	void allChangeTimerObsNotify( Timer t );
 	static void* mainThread( void * );
 	static void timerThread( union sigval si );
-	enum Status { RUN, STOP, EXIT };
+	enum Status { RUN, STOP, PAUSE, EXIT };
 	Status is; // internal status
 	Status ns; // new status
 	Config & conf;
@@ -64,7 +76,8 @@ private:
 	timer_t timerId;
 	struct itimerspec ts;
 	struct sigevent se;
-	
+	pthread_mutex_t obs_mutex;
+	std::vector<changeTimerObs *> changeTimerObservers;
 };
 
 } // namespace
