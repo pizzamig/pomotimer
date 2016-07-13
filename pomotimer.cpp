@@ -171,6 +171,17 @@ pomotimer::Pomotimer::addChangeTimerObs( changeTimerObs * o )
 }
 
 void
+pomotimer::Pomotimer::addTimeObs( timeObs * o )
+{
+	if( o == nullptr ) {
+		return;
+	}
+	pthread_mutex_lock( &obs_mutex );
+	timeObservers.push_back( o );
+	pthread_mutex_unlock( &obs_mutex );
+}
+
+void
 pomotimer::Pomotimer::allChangeTimerObsNotify(Timer t)
 {
 	pthread_mutex_lock( &obs_mutex );
@@ -181,11 +192,23 @@ pomotimer::Pomotimer::allChangeTimerObsNotify(Timer t)
 }
 
 void
+pomotimer::Pomotimer::allTimeObsNotify(uint32_t t)
+{
+	pthread_mutex_lock( &obs_mutex );
+	for( auto it = timeObservers.begin(); it != timeObservers.end(); ++it ) {
+		(*it)->newTime(t);
+	}
+	pthread_mutex_unlock( &obs_mutex );
+}
+
+void
 pomotimer::Pomotimer::timerThread( union sigval si )
 {
 	Pomotimer * p = static_cast<Pomotimer *>(si.sival_ptr);
 	Timer tOld = p->pomo.getTimerType();
 	p->pomo.update();
+	uint32_t newTime = p->pomo.getTime();
+	p->allTimeObsNotify( newTime );
 	Timer tNew = p->pomo.getTimerType();
 	if ( tOld == tNew ) {
 		return;

@@ -51,6 +51,12 @@ public:
 	void virtual changeTimer( Timer t ) = 0;
 };
 
+class timeObs
+{
+public:
+	void virtual newTime( uint32_t t ) = 0;
+};
+
 class Pomotimer {
 public:
 	Pomotimer( Config & );
@@ -60,8 +66,10 @@ public:
 	void pause();
 	uint32_t getTime() const { return pomo.getTime(); }
 	void addChangeTimerObs( changeTimerObs * o );
+	void addTimeObs( timeObs * o );
 private:
 	void allChangeTimerObsNotify( Timer t );
+	void allTimeObsNotify( uint32_t t );
 	static void* mainThread( void * );
 	static void timerThread( union sigval si );
 	enum Status { RUN, STOP, PAUSE, EXIT };
@@ -78,6 +86,7 @@ private:
 	struct sigevent se;
 	pthread_mutex_t obs_mutex;
 	std::vector<changeTimerObs *> changeTimerObservers;
+	std::vector<timeObs *> timeObservers;
 };
 
 } // namespace
