@@ -5,6 +5,18 @@
 
 #include <iostream>
 
+class ncTimeObs : public pomotimer::timeObs
+{
+public:
+	void virtual newTime( uint32_t );
+};
+
+void
+ncTimeObs:: newTime( uint32_t t )
+{
+	printw("Time to end is %u\n", t );
+	refresh();
+}
 
 void
 cli_init()
@@ -27,22 +39,21 @@ int main()
 	pomotimer::Config config(10,2,4,2); // short times, for testing
 	auto * tomato = new pomotimer::Pomotimer(config);
 	cli_init();
-	printw( "time before start: %u\n", tomato->getTime() );
-	tomato->start();
-	printw( "time at start: %u\n", tomato->getTime() );
-	sleep( 5 );
-	printw( "time after 5s: %u\n", tomato->getTime() );
+	ncTimeObs timeSlot;
+	tomato->addTimeObs( &timeSlot ); 
+	printw( "start\n");
 	refresh();
+	tomato->start();
+	sleep( 5 );
+	printw( "stop\n");
 	tomato->stop();
+	refresh();
 	sleep( 1 );
-	printw( "time after stop: %u\n", tomato->getTime() );
+	printw( "start\n");
 	refresh();
-	printw( "time before start: %u\n", tomato->getTime() );
 	tomato->start();
-	printw( "time at start: %u\n", tomato->getTime() );
 	sleep( 5 );
-	printw( "time after 5s: %u\n", tomato->getTime() );
-	refresh();
+	printw( "pause\n");
 	tomato->pause();
 	sleep( 1 );
 	printw( "time after pause: %u\n", tomato->getTime() );
