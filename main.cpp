@@ -1,23 +1,36 @@
 #include "pomotimer.h"
-
+#include "observer.h"
 #include <unistd.h>
 #include <ncurses.h>
 
 #include <iostream>
 
-class ncTimeObs : public pomotimer::timeObs
+class ncTimeObs : public nctk::Observer< uint32_t >
 {
-public:
-	void virtual newTime( uint32_t );
+	virtual void notify( uint32_t t )
+	{
+		printw("Time to end is %u\n", t );
+		refresh();
+	}
 };
 
-void
-ncTimeObs:: newTime( uint32_t t )
+class ncTTypeObs : public nctk::Observer< pomotimer::Timer >
 {
-	printw("Time to end is %u\n", t );
-	refresh();
-}
-
+	virtual void notify ( pomotimer::Timer t )
+	{
+		switch ( t ) {
+			case pomotimer::FOCUS:
+				printw("Pomodoro switched to FOCUS\n");refresh();
+				break;
+			case pomotimer::SHORT_BREAK:
+				printw("Pomodoro switched to SHORT BREAK\n");refresh();
+				break;
+			case pomotimer::LONG_BREAK:
+				printw("Pomodoro switched to LONG BREAK\n");refresh();
+				break;
+		}
+	}
+};
 void
 cli_init()
 {
@@ -36,31 +49,31 @@ cli_close()
 
 int main()
 {
-	pomotimer::Config config(10,2,4,2); // short times, for testing
+	pomotimer::Config config(6,2,4,2); // short times, for testing
 	auto * tomato = new pomotimer::Pomotimer(config);
 	cli_init();
 	ncTimeObs timeSlot;
-	tomato->addTimeObs( &timeSlot ); 
-	printw( "start\n");
-	refresh();
+	ncTTypeObs typeSlot;
+	tomato->addObs( &timeSlot );
+	tomato->addObs( &typeSlot );
+	printw( "start\n"); refresh();
 	tomato->start();
 	sleep( 5 );
-	printw( "stop\n");
+	printw( "stop\n"); refresh();
 	tomato->stop();
-	refresh();
-	sleep( 1 );
-	printw( "start\n");
-	refresh();
+	sleep( 2 );
+	printw( "start\n"); refresh();
 	tomato->start();
 	sleep( 5 );
-	printw( "pause\n");
+	printw( "pause\n"); refresh();
 	tomato->pause();
-	sleep( 1 );
-	printw( "time after pause: %u\n", tomato->getTime() );
-	refresh();
+	sleep( 2 );
+	printw( "restart\n"); refresh();
+	tomato->start();
+	sleep( 20 );
+	printw( "stop\n"); refresh();
+	tomato->stop();
 	delete tomato;
-// 	while( tomato.getTimerType() != pomotimer::Timer::LONG_BREAK ) {
-// 	}
 	getch();
 	cli_close();
 	return 0;

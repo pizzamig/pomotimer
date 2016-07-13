@@ -5,6 +5,8 @@
 #include <signal.h>
 #include <vector>
 
+#include "observer.h"
+
 namespace pomotimer {
 
 class Config
@@ -57,7 +59,9 @@ public:
 	void virtual newTime( uint32_t t ) = 0;
 };
 
-class Pomotimer {
+class Pomotimer : public nctk::Observable< Timer >,
+									public nctk::Observable< uint32_t >
+{
 public:
 	Pomotimer( Config & );
 	~Pomotimer();
@@ -65,11 +69,11 @@ public:
 	void stop();
 	void pause();
 	uint32_t getTime() const { return pomo.getTime(); }
-	void addChangeTimerObs( changeTimerObs * o );
-	void addTimeObs( timeObs * o );
+	using nctk::Observable< Timer >::addObs;
+	using nctk::Observable< uint32_t >::addObs;
 private:
-	void allChangeTimerObsNotify( Timer t );
-	void allTimeObsNotify( uint32_t t );
+	using nctk::Observable< Timer >::notifyAllObs;
+	using nctk::Observable< uint32_t >::notifyAllObs;
 	static void* mainThread( void * );
 	static void timerThread( union sigval si );
 	enum Status { RUN, STOP, PAUSE, EXIT };
@@ -84,9 +88,6 @@ private:
 	timer_t timerId;
 	struct itimerspec ts;
 	struct sigevent se;
-	pthread_mutex_t obs_mutex;
-	std::vector<changeTimerObs *> changeTimerObservers;
-	std::vector<timeObs *> timeObservers;
 };
 
 } // namespace
