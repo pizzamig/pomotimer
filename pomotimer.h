@@ -46,19 +46,6 @@ private:
 	pthread_cond_t cond;
 };
 
-// change timer observer
-class changeTimerObs
-{
-public:
-	void virtual changeTimer( Timer t ) = 0;
-};
-
-class timeObs
-{
-public:
-	void virtual newTime( uint32_t t ) = 0;
-};
-
 class Pomotimer : public nctk::Observable< Timer >,
 									public nctk::Observable< uint32_t >
 {
@@ -90,4 +77,4 @@ private:
 	struct sigevent se;
 };
 
-} // namespace
+} // namespace pomotimer
