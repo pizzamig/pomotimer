@@ -205,6 +205,9 @@ void
 pomotimer::Pomotimer::timerThread( union sigval si )
 {
 	Pomotimer * p = static_cast<Pomotimer *>(si.sival_ptr);
+	if( p->ns == STOP || p->ns == PAUSE ) {
+		return;
+	}
 	Timer tOld = p->pomo.getTimerType();
 	p->pomo.update();
 	uint32_t newTime = p->pomo.getTime();
