@@ -2,8 +2,11 @@ CXX=clang++
 LDFLAGS+=-lrt -lncurses -lpthread -L/usr/local/lib
 CFLAGS+=-Wall -std=c++11 -g -O0
 
-pomotimer: main.cpp pomotimer.cpp pomotimer.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) pomotimer.cpp main.cpp -o pomotimer
+SRCS=main.cpp pomotimer.cpp
+HDRS=pomotimer.h observer.h
+
+pomotimer: $(SRCS) $(HDRS)
+	$(CXX) $(CFLAGS) $(LDFLAGS) $(SRCS) -o pomotimer
 
 clean:
 	rm -f pomotimer
