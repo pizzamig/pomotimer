@@ -13,26 +13,22 @@ pomotimer::Config::Config() : focus( 25*60 ), shortBreak( 5*60 ),
 {}
 
 pomotimer::Pomodoro::Pomodoro(Config &c) : type(FOCUS), time(c.getFocus()), loopCounter(0),
-	localConfig( c )
-{
-	mutex = PTHREAD_MUTEX_INITIALIZER;
-	cond = PTHREAD_COND_INITIALIZER;
-}
+	localConfig( c ), mtx()
+{}
 
 void
 pomotimer::Pomodoro::reset()
 {
-	pthread_mutex_lock( &mutex );
+	std::lock_guard<std::mutex> lock(mtx);
 	time = localConfig.getFocus();
 	type = FOCUS;
 	loopCounter = 0;
-	pthread_mutex_unlock( &mutex );
 }
 
 void
 pomotimer::Pomodoro::update()
 {
-	pthread_mutex_lock( &mutex );
+	std::lock_guard<std::mutex> lock(mtx);
 	if( time == 0 ) {
 		// change the timer type
 		switch( type ) {
@@ -58,14 +54,12 @@ pomotimer::Pomodoro::update()
 		}
 	}
 	--time;
-	pthread_mutex_unlock( &mutex );
 }
 
 pomotimer::Pomotimer::Pomotimer(Config &c)
 	: is(STOP), ns(STOP), conf(c), pomo( conf ), tid( 0 )
 {
 	mutex = PTHREAD_MUTEX_INITIALIZER;
-	cond = PTHREAD_COND_INITIALIZER;
 	/*
 	Set the sigevent structure to cause the signal to be
 	delivered by creating a new thread.
@@ -170,11 +164,10 @@ pomotimer::Pomotimer::timerThread( union sigval si )
 	pthread_mutex_unlock ( &(p->mutex) );
 	Timer tOld = p->pomo.getTimerType();
 	p->pomo.update();
+	Timer tNew = p->pomo.getTimerType();
+	if ( tOld != tNew ) {
+		p->notifyAllObs( tNew );
+	}
 	uint32_t newTime = p->pomo.getTime();
 	p->notifyAllObs( newTime );
-	Timer tNew = p->pomo.getTimerType();
-	if ( tOld == tNew ) {
-		return;
-	}
-	p->notifyAllObs( tNew );
 }
