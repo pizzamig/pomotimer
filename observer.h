@@ -3,7 +3,7 @@
 #include <mutex>
 #include <algorithm>
 
-namespace nctk {
+namespace utility {
 
 template< typename T >
 class Observer
@@ -32,4 +32,4 @@ private:
 	std::vector< Obs * > observers;
 	std::mutex mtx;
 };
-} // namespace nctk
+} // namespace utility
