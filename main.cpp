@@ -14,18 +14,18 @@ class ncTimeObs : public utility::Observer< uint32_t >
 	}
 };
 
-class ncTTypeObs : public utility::Observer< pomotimer::Timer >
+class ncTTypeObs : public utility::Observer< pomotimer::TimerType >
 {
-	virtual void notify ( pomotimer::Timer t )
+	virtual void notify ( pomotimer::TimerType t )
 	{
 		switch ( t ) {
-			case pomotimer::FOCUS:
+			case pomotimer::TimerType::FOCUS:
 				printw("Pomodoro switched to FOCUS\n");refresh();
 				break;
-			case pomotimer::SHORT_BREAK:
+			case pomotimer::TimerType::SHORT_BREAK:
 				printw("Pomodoro switched to SHORT BREAK\n");refresh();
 				break;
-			case pomotimer::LONG_BREAK:
+			case pomotimer::TimerType::LONG_BREAK:
 				printw("Pomodoro switched to LONG BREAK\n");refresh();
 				break;
 		}

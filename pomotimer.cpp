@@ -8,7 +8,7 @@ pomotimer::Config::Config(uint32_t focus, uint32_t shortBreak,
 	longBreak( longBreak ), loopSize( loopSize )
 {}
 
-pomotimer::Pomodoro::Pomodoro(Config &c) : type(FOCUS), time(c.getFocus()), loopCounter(0),
+pomotimer::Pomodoro::Pomodoro(Config &c) : type(TimerType::FOCUS), time(c.getFocus()), loopCounter(0),
 	localConfig( c ), mtx()
 {}
 
@@ -17,7 +17,7 @@ pomotimer::Pomodoro::reset()
 {
 	std::lock_guard<std::mutex> lock(mtx);
 	time = localConfig.getFocus();
-	type = FOCUS;
+	type = TimerType::FOCUS;
 	loopCounter = 0;
 }
 
@@ -28,23 +28,23 @@ pomotimer::Pomodoro::update()
 	if( time == 0 ) {
 		// change the timer type
 		switch( type ) {
-			case FOCUS:
+			case TimerType::FOCUS:
 				loopCounter++;
 				if( loopCounter == localConfig.getLoopSize() ) {
-					type=LONG_BREAK;
+					type=TimerType::LONG_BREAK;
 					time=localConfig.getLongBreak();
 					loopCounter=0;
 				} else {
-					type=SHORT_BREAK;
+					type=TimerType::SHORT_BREAK;
 					time=localConfig.getShortBreak();
 				}
 				break;
-			case SHORT_BREAK:
-				type=FOCUS;
+			case TimerType::SHORT_BREAK:
+				type=TimerType::FOCUS;
 				time=localConfig.getFocus();
 				break;
-			case LONG_BREAK:
-				type=FOCUS;
+			case TimerType::LONG_BREAK:
+				type=TimerType::FOCUS;
 				time=localConfig.getFocus();
 				break;
 		}
@@ -158,9 +158,9 @@ pomotimer::Pomotimer::timerThread( union sigval si )
 		return;
 	}
 	pthread_mutex_unlock ( &(p->mutex) );
-	Timer tOld = p->pomo.getTimerType();
+	TimerType tOld = p->pomo.getTimerType();
 	p->pomo.update();
-	Timer tNew = p->pomo.getTimerType();
+	TimerType tNew = p->pomo.getTimerType();
 	if ( tOld != tNew ) {
 		p->notifyAllObs( tNew );
 	}
