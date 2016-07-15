@@ -10,3 +10,9 @@ pomotimer: $(SRCS) $(HDRS)
 
 clean:
 	rm -f pomotimer
+	rm -rf html
+
+doc: $(SRCS) $(HDRS)
+	doxygen Doxyfile
+
+.PHONY: doc clean
