@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-class ncTimeObs : public nctk::Observer< uint32_t >
+class ncTimeObs : public utility::Observer< uint32_t >
 {
 	virtual void notify( uint32_t t )
 	{
@@ -14,7 +14,7 @@ class ncTimeObs : public nctk::Observer< uint32_t >
 	}
 };
 
-class ncTTypeObs : public nctk::Observer< pomotimer::Timer >
+class ncTTypeObs : public utility::Observer< pomotimer::Timer >
 {
 	virtual void notify ( pomotimer::Timer t )
 	{

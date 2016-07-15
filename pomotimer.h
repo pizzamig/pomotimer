@@ -10,7 +10,7 @@
 
 namespace pomotimer {
 
-	/** The pomodoro configuration class
+	/** The pomodoro configuration class.
 	 * With this class you can configure the length of all pomodoro timers
 	 * and the length of the loop sequence
 	 */
@@ -38,8 +38,17 @@ private:
 
 enum Timer { FOCUS, SHORT_BREAK, LONG_BREAK };
 
+/** The Pomodoro timer state machine
+ * This class implements the state machine under a pomodoro timer
+ * It tracks the status of the timer; to update the interal status
+ * the update() member function has to be called every second
+ */
 class Pomodoro {
 public:
+	/** The initializing constructor
+	 * The constructor initializes the state machine to be ready to start
+	 * in Focus mode
+	 */
 	Pomodoro( Config &c );
 	uint32_t getTime() const { return time; }
 	void update();
@@ -49,13 +58,13 @@ public:
 private:
 	Timer type;
 	uint32_t time;
-	uint32_t loopCounter; // short break counter
+	uint32_t loopCounter; // focus counter
 	Config & localConfig;
 	std::mutex mtx;
 };
 
-class Pomotimer : public nctk::Observable< Timer >,
-									public nctk::Observable< uint32_t >
+class Pomotimer : public utility::Observable< Timer >,
+									public utility::Observable< uint32_t >
 {
 public:
 	Pomotimer( Config & );
@@ -64,11 +73,11 @@ public:
 	void stop();
 	void pause();
 	uint32_t getTime() const { return pomo.getTime(); }
-	using nctk::Observable< Timer >::addObs;
-	using nctk::Observable< uint32_t >::addObs;
+	using utility::Observable< Timer >::addObs;
+	using utility::Observable< uint32_t >::addObs;
 private:
-	using nctk::Observable< Timer >::notifyAllObs;
-	using nctk::Observable< uint32_t >::notifyAllObs;
+	using utility::Observable< Timer >::notifyAllObs;
+	using utility::Observable< uint32_t >::notifyAllObs;
 	static void* mainThread( void * );
 	static void timerThread( union sigval si );
 	enum Status { RUN, STOP, PAUSE, EXIT };
