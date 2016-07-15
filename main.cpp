@@ -1,5 +1,6 @@
 #include "pomotimer.h"
 #include "observer.h"
+#include "nctk.h"
 #include <unistd.h>
 #include <ncurses.h>
 
@@ -31,31 +32,17 @@ class ncTTypeObs : public nctk::Observer< pomotimer::Timer >
 		}
 	}
 };
-void
-cli_init()
-{
-	initscr();
-	raw();
-	keypad(stdscr, TRUE);
-	noecho();
-}
-
-void
-cli_close()
-{
-	echo();
-	endwin();
-}
 
 int main()
 {
 	pomotimer::Config config(6,2,4,2); // short times, for testing
 	auto * tomato = new pomotimer::Pomotimer(config);
-	cli_init();
+	nctk::Application app;
 	ncTimeObs timeSlot;
 	ncTTypeObs typeSlot;
 	tomato->addObs( &timeSlot );
 	tomato->addObs( &typeSlot );
+	printw( "rows: %d, cols: %d\n", app.getRows(), app.getCols() );
 	printw( "start\n"); refresh();
 	tomato->start();
 	sleep( 5 );
@@ -75,7 +62,6 @@ int main()
 	tomato->stop();
 	delete tomato;
 	getch();
-	cli_close();
 	return 0;
 }
 
