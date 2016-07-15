@@ -17,7 +17,7 @@ namespace pomotimer {
 class Config
 {
 public:
-	/** The configurable constructor
+	/** The configurable constructor.
 	 * @param focus How long the focus time is, in seconds; default 25 minutes
 	 * @param shortBreak How long the short break is, in seconds; default 5 minutes
 	 * @param longBreak How long the long break is, in seconds; default 20 minutes
@@ -38,23 +38,39 @@ private:
 
 enum Timer { FOCUS, SHORT_BREAK, LONG_BREAK };
 
-/** The Pomodoro timer state machine
+/** The Pomodoro timer state machine.
  * This class implements the state machine under a pomodoro timer
  * It tracks the status of the timer; to update the interal status
  * the update() member function has to be called every second
  */
 class Pomodoro {
 public:
-	/** The initializing constructor
-	 * The constructor initializes the state machine to be ready to start
-	 * in Focus mode
+	/** The initializing constructor.
+	 * The constructor initializes the state machine to its initial status:
+	 * * Timer set to Focus
+	 * * Time resetted
+	 * * Loop counter resetted
 	 */
 	Pomodoro( Config &c );
-	uint32_t getTime() const { return time; }
+	/** Updating the internal status.
+	 * This function update the internal status, meanings that 1 second is passed since last update
+	 * The function decrement the time left in the current timer of 1 second
+	 * In the current timer is expired, the function change the current timer to the next one
+	 * following the Pomodoro rules.
+	 */
 	void update();
+	/** Resetting the status of the Pomodoro timer.
+	 * This function reset the timer, bringing back it to the initial status
+	 * ( timer set to Focus, time resetted, loop counter resetted )
+	 */
 	void reset();
+	/** Get the left time of the current timer (in seconds)
+	 * This function return the amount of seconds remaining in the current timer
+	 */
+	uint32_t getTime() const { return time; }
+	/** Get the current timer type
+	 */
 	Timer getTimerType() const { return type; }
-	std::mutex * getMutex() { return &mtx; }
 private:
 	Timer type;
 	uint32_t time;
