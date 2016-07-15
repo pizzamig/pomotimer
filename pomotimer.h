@@ -10,12 +10,21 @@
 
 namespace pomotimer {
 
+	/** The pomodoro configuration class
+	 * With this class you can configure the length of all pomodoro timers
+	 * and the length of the loop sequence
+	 */
 class Config
 {
 public:
-	Config();
-	Config(uint32_t focus, uint32_t shortBreak,
-		uint32_t longBreak, uint32_t loopSize );
+	/** The configurable constructor
+	 * @param focus How long the focus time is, in seconds; default 25 minutes
+	 * @param shortBreak How long the short break is, in seconds; default 5 minutes
+	 * @param longBreak How long the long break is, in seconds; default 20 minutes
+	 * @param loopSize How many focus times are needed to get a long break; default 4
+	 */
+	Config(uint32_t focus = 1500, uint32_t shortBreak = 300,
+		uint32_t longBreak = 1200, uint32_t loopSize = 4 );
 	uint32_t getFocus() const { return focus; }
 	uint32_t getShortBreak() const { return shortBreak; }
 	uint32_t getLongBreak() const { return longBreak; }

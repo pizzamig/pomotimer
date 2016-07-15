@@ -8,10 +8,6 @@ pomotimer::Config::Config(uint32_t focus, uint32_t shortBreak,
 	longBreak( longBreak ), loopSize( loopSize )
 {}
 
-pomotimer::Config::Config() : focus( 25*60 ), shortBreak( 5*60 ),
-	longBreak( 20*60 ), loopSize( 4 )
-{}
-
 pomotimer::Pomodoro::Pomodoro(Config &c) : type(FOCUS), time(c.getFocus()), loopCounter(0),
 	localConfig( c ), mtx()
 {}
