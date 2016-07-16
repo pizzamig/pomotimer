@@ -5,10 +5,10 @@ configTest: pomodoro_config.cpp ../pomotimer.cpp
 
 build: configTest
 
-run:
+run: build
 	./configTest | tee -a log
 	@./travis-test-output.sh
 
 clean:
-	rm -f configTest
+	rm -f configTest log
 .PHONY: build clean run
