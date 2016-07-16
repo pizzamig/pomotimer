@@ -22,9 +22,9 @@ public:
 		defaultC = new pomotimer::Config();
 		customC = new pomotimer::Config( 25,5,20,2 );
 		wrongC1 = new pomotimer::Config( 200, 300, 400, 0 );
-		wrongC2 = new pomotimer::Config( 200, 300, 400, 0 );
-		wrongC3 = new pomotimer::Config( 200, 300, 400, 0 );
-		wrongC4 = new pomotimer::Config( 200, 300, 400, 0 );
+		wrongC2 = new pomotimer::Config( 5, 300, 400, 0 );
+		wrongC3 = new pomotimer::Config( 5, 8, 400, 0 );
+		wrongC4 = new pomotimer::Config( 5, 8, 2, 0 );
 	}
 	void tearDown()
 	{
@@ -47,17 +47,37 @@ public:
 		CPPUNIT_ASSERT( customC->getShortBreak() == 5 );
 		CPPUNIT_ASSERT( customC->getLongBreak() == 20 );
 		CPPUNIT_ASSERT( customC->getLoopSize() == 2 );
-
+	}
+	void testWrongConfigs()
+	{
 		CPPUNIT_ASSERT( wrongC1->getFocus() == 200 );
 		CPPUNIT_ASSERT( wrongC1->getShortBreak() == 300 );
 		CPPUNIT_ASSERT( wrongC1->getLongBreak() == 400 );
-// 		CPPUNIT_ASSERT( wrongC1->getLoopSize() == 1 );
+		CPPUNIT_ASSERT( wrongC1->getLoopSize() == 2 );
+		
+		CPPUNIT_ASSERT( wrongC2->getFocus() == 10 );
+		CPPUNIT_ASSERT( wrongC2->getShortBreak() == 300 );
+		CPPUNIT_ASSERT( wrongC2->getLongBreak() == 400 );
+		CPPUNIT_ASSERT( wrongC2->getLoopSize() == 2 );
+
+		CPPUNIT_ASSERT( wrongC3->getFocus() == 10 );
+		CPPUNIT_ASSERT( wrongC3->getShortBreak() == 10 );
+		CPPUNIT_ASSERT( wrongC3->getLongBreak() == 400 );
+		CPPUNIT_ASSERT( wrongC3->getLoopSize() == 2 );
+
+		CPPUNIT_ASSERT( wrongC4->getFocus() == 10 );
+		CPPUNIT_ASSERT( wrongC4->getShortBreak() == 10 );
+		CPPUNIT_ASSERT( wrongC4->getLongBreak() == 10 );
+		CPPUNIT_ASSERT( wrongC4->getLoopSize() == 2 );
+
 	}
 	static CppUnit::TestSuite *suite()
 	{
 		CppUnit::TestSuite *suiteConfig = new CppUnit::TestSuite( "ConfigTest" );
 		suiteConfig->addTest( new CppUnit::TestCaller< ConfigTest > (
 			"testConstructor", &ConfigTest::testConstructor )) ;
+		suiteConfig->addTest( new CppUnit::TestCaller< ConfigTest > (
+			"testWrongConfigs", &ConfigTest::testWrongConfigs )) ;
 		return suiteConfig;
 	}
 };
