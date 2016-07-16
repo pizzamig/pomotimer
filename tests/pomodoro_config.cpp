@@ -20,7 +20,7 @@ public:
 	void setUp()
 	{
 		defaultC = new pomotimer::Config();
-		customC = new pomotimer::Config( 25,5,20,2 );
+		customC = new pomotimer::Config( 25,10,20,2 );
 		wrongC1 = new pomotimer::Config( 200, 300, 400, 0 );
 		wrongC2 = new pomotimer::Config( 5, 300, 400, 0 );
 		wrongC3 = new pomotimer::Config( 5, 8, 400, 0 );
@@ -44,7 +44,7 @@ public:
 		CPPUNIT_ASSERT( defaultC->getLoopSize() == 4 );
 
 		CPPUNIT_ASSERT( customC->getFocus() == 25 );
-		CPPUNIT_ASSERT( customC->getShortBreak() == 5 );
+		CPPUNIT_ASSERT( customC->getShortBreak() == 10 );
 		CPPUNIT_ASSERT( customC->getLongBreak() == 20 );
 		CPPUNIT_ASSERT( customC->getLoopSize() == 2 );
 	}

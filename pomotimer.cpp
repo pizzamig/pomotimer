@@ -6,7 +6,23 @@ pomotimer::Config::Config(uint32_t focus, uint32_t shortBreak,
 	uint32_t longBreak, uint32_t loopSize) :
 	focus( focus ), shortBreak( shortBreak ),
 	longBreak( longBreak ), loopSize( loopSize )
-{}
+{
+	// verifying the validity of the config input
+	const uint32_t minimumTime = 10;
+	const uint32_t minimumLoop = 2;
+	if ( focus < minimumTime ) {
+		this->focus = minimumTime;
+	}
+	if ( shortBreak < minimumTime ) {
+		this->shortBreak = minimumTime;
+	}
+	if ( longBreak < minimumTime ) {
+		this->longBreak = minimumTime;
+	}
+	if ( loopSize < minimumLoop ) {
+		this->loopSize = minimumLoop;
+	}
+}
 
 pomotimer::Pomodoro::Pomodoro(Config &c) : type(TimerType::FOCUS), time(c.getFocus()), loopCounter(0),
 	localConfig( c ), mtx()

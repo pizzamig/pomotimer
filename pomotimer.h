@@ -18,10 +18,12 @@ class Config
 {
 public:
 	/** The configurable constructor.
-	 * @param focus How long the focus time is, in seconds; default 25 minutes
-	 * @param shortBreak How long the short break is, in seconds; default 5 minutes
-	 * @param longBreak How long the long break is, in seconds; default 20 minutes
-	 * @param loopSize How many focus times are needed to get a long break; default 4
+	 * If the parameter is invalid (like 0 seconds), it will be automatically fixed to
+	 * a valid value
+	 * @param focus How long the focus time is, in seconds; default 25 minutes, minimum 10 seconds
+	 * @param shortBreak How long the short break is, in seconds; default 5 minutes, minimum 10 seconds
+	 * @param longBreak How long the long break is, in seconds; default 20 minutes, minimum 10 seconds
+	 * @param loopSize How many focus times are needed to get a long break; default 4, minimum 2
 	 */
 	Config(uint32_t focus = 1500, uint32_t shortBreak = 300,
 		uint32_t longBreak = 1200, uint32_t loopSize = 4 );
