@@ -8,7 +8,7 @@ namespace pomotimer {
 	 * This class collect some statistical information about the number of pomodoro
 	 * used to perform a task
 	 */
-	class Tracker : public utility::Obsever< TimerType > {
+	class Tracker : public utility::Observer< TimerType > {
 	public:
 		Tracker(Pomotimer &p);
 		uint32_t getStartedPomo();
@@ -17,7 +17,6 @@ namespace pomotimer {
 		void reset();
 	private:
 		Pomotimer & pt;
-		timerObs obs;
 		// counters
 		uint32_t started;
 		uint32_t finished;

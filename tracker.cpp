@@ -1,7 +1,7 @@
 #include "tracker.h"
 
-pomotimer::Tracker::Tracker(Pomotimer &p) :
-	pt( p ), obs(), started(0), finished(0), mtx()
+pomotimer::Tracker::Tracker(pomotimer::Pomotimer &p) :
+	pt( p ), started(0), finished(0), mtx()
 {
 	p.addObs( this );
 }
@@ -32,7 +32,7 @@ void
 pomotimer::Tracker::notify( pomotimer::TimerType t )
 {
 	std::lock_guard<std::mutex> lock(mtx);
-	if( t == pomotimer::FOCUS ) {
+	if( t == pomotimer::TimerType::FOCUS ) {
 		started++;
 	} else {
 		finished++;
