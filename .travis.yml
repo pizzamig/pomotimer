@@ -7,4 +7,5 @@ addons:
     packages:
     - libcppunit-dev
     - doxygen
+    - g++-4.8
 script: make all && make test
