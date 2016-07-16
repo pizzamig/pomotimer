@@ -1,9 +1,11 @@
 CXX?=clang++
-LDFLAGS+=-lrt -lncurses -lpthread -L/usr/local/lib
-CFLAGS+=-Wall -std=c++11 -g -O0
+export LDFLAGS+=-lrt -lncurses -lpthread -L/usr/local/lib
+export CFLAGS+=-Wall -std=c++11 -g -O0
 
 SRCS=main.cpp pomotimer.cpp nctk.cpp
 HDRS=pomotimer.h observer.h nctk.h
+
+all: pomotimer doc buildtests
 
 pomotimer: $(SRCS) $(HDRS)
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(SRCS) -o pomotimer
@@ -11,10 +13,15 @@ pomotimer: $(SRCS) $(HDRS)
 clean:
 	rm -f pomotimer
 	rm -rf html
+	$(MAKE) -C tests clean
 
 doc: $(SRCS) $(HDRS)
 	doxygen Doxyfile
 
-tests:
-	$(MAKE) -C tests
-.PHONY: doc clean tests
+buildtests:
+	$(MAKE) -C tests build
+
+test:
+	$(MAKE) -C tests run
+	
+.PHONY: all clean doc tests
