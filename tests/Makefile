@@ -6,7 +6,8 @@ configTest: pomodoro_config.cpp ../pomotimer.cpp
 build: configTest
 
 run:
-	./configTest
+	./configTest | tee -a log
+	@./travis-test-output.sh
 
 clean:
 	rm -f configTest
