@@ -1,11 +1,9 @@
 language: cpp
-compiler:
+compiler: clang
   - clang
-  - gcc
 addons:
   apt:
     packages:
     - libcppunit-dev
     - doxygen
-    - g++-4.8
 script: make all && make test
