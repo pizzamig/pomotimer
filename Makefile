@@ -1,4 +1,4 @@
-CXX=clang++
+CXX?=clang++
 LDFLAGS+=-lrt -lncurses -lpthread -L/usr/local/lib
 CFLAGS+=-Wall -std=c++11 -g -O0
 
@@ -15,4 +15,6 @@ clean:
 doc: $(SRCS) $(HDRS)
 	doxygen Doxyfile
 
-.PHONY: doc clean
+tests:
+	$(MAKE) -C tests
+.PHONY: doc clean tests
