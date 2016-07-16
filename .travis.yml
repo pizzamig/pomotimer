@@ -6,4 +6,5 @@ addons:
   apt:
     packages:
     - libcppunit-dev
-script: make
+    - doxygen
+script: make all && make test
