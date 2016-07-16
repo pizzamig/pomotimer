@@ -48,28 +48,33 @@ public:
 		CPPUNIT_ASSERT( customC->getLongBreak() == 20 );
 		CPPUNIT_ASSERT( customC->getLoopSize() == 2 );
 	}
-	void testWrongConfigs()
+	void testWrongConfig1()
 	{
 		CPPUNIT_ASSERT( wrongC1->getFocus() == 200 );
 		CPPUNIT_ASSERT( wrongC1->getShortBreak() == 300 );
 		CPPUNIT_ASSERT( wrongC1->getLongBreak() == 400 );
 		CPPUNIT_ASSERT( wrongC1->getLoopSize() == 2 );
-		
+	}
+	void testWrongConfig2()
+	{
 		CPPUNIT_ASSERT( wrongC2->getFocus() == 10 );
 		CPPUNIT_ASSERT( wrongC2->getShortBreak() == 300 );
 		CPPUNIT_ASSERT( wrongC2->getLongBreak() == 400 );
 		CPPUNIT_ASSERT( wrongC2->getLoopSize() == 2 );
-
+	}
+	void testWrongConfig3()
+	{
 		CPPUNIT_ASSERT( wrongC3->getFocus() == 10 );
 		CPPUNIT_ASSERT( wrongC3->getShortBreak() == 10 );
 		CPPUNIT_ASSERT( wrongC3->getLongBreak() == 400 );
 		CPPUNIT_ASSERT( wrongC3->getLoopSize() == 2 );
-
+	}
+	void testWrongConfig4()
+	{
 		CPPUNIT_ASSERT( wrongC4->getFocus() == 10 );
 		CPPUNIT_ASSERT( wrongC4->getShortBreak() == 10 );
 		CPPUNIT_ASSERT( wrongC4->getLongBreak() == 10 );
 		CPPUNIT_ASSERT( wrongC4->getLoopSize() == 2 );
-
 	}
 	static CppUnit::TestSuite *suite()
 	{
@@ -77,7 +82,13 @@ public:
 		suiteConfig->addTest( new CppUnit::TestCaller< ConfigTest > (
 			"testConstructor", &ConfigTest::testConstructor )) ;
 		suiteConfig->addTest( new CppUnit::TestCaller< ConfigTest > (
-			"testWrongConfigs", &ConfigTest::testWrongConfigs )) ;
+			"testWrongConfig1", &ConfigTest::testWrongConfig1 )) ;
+		suiteConfig->addTest( new CppUnit::TestCaller< ConfigTest > (
+			"testWrongConfig2", &ConfigTest::testWrongConfig2 )) ;
+		suiteConfig->addTest( new CppUnit::TestCaller< ConfigTest > (
+			"testWrongConfig3", &ConfigTest::testWrongConfig3 )) ;
+		suiteConfig->addTest( new CppUnit::TestCaller< ConfigTest > (
+			"testWrongConfig4", &ConfigTest::testWrongConfig4 )) ;
 		return suiteConfig;
 	}
 };
