@@ -30,6 +30,8 @@ public:
 	{
 		CPPUNIT_ASSERT( pomo->getTimerType() == pomotimer::TimerType::FOCUS );
 		CPPUNIT_ASSERT( pomo->getTime() == defaultC.getFocus() );
+		CPPUNIT_ASSERT( fastPomo->getTimerType() == pomotimer::TimerType::FOCUS );
+		CPPUNIT_ASSERT( fastPomo->getTime() == shortC->getFocus() );
 	}
 
 	void testUpdateReset()
