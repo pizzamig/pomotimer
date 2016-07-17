@@ -111,6 +111,7 @@ pomotimer::Pomotimer::mainThread( void * arg )
 		if ( p->is == p->ns ) {
 			continue;
 		}
+		bool timerNotification=false;
 		switch(p->ns) {
 			case RUN:
 				p->ts.it_value.tv_sec = 1;
@@ -121,6 +122,9 @@ pomotimer::Pomotimer::mainThread( void * arg )
 				p->ts.it_value.tv_sec = 0;
 				p->ts.it_interval.tv_sec = 0;
 				timer_settime( p->timerId, 0, &(p->ts), 0 );
+				if( p->pomo.getTimerType() != pomotimer::TimerType::FOCUS ) {
+					timerNotification = true;
+				}
 				p->pomo.reset();
 				break;
 			case PAUSE:
@@ -130,12 +134,14 @@ pomotimer::Pomotimer::mainThread( void * arg )
 			case EXIT:
 				break;
 		}
-		p->is = p->ns;
-		if( p->ns == STOP ) {
-				uint32_t newTime = p->pomo.getTime();
-				p->notifyAllObs( newTime );
+		if( timerNotification ) {
+			p->notifyAllObs( p->pomo.getTimerType() );
 		}
-
+		if( p->ns == STOP ) {
+			uint32_t newTime = p->pomo.getTime();
+			p->notifyAllObs( newTime );
+		}
+		p->is = p->ns;
 	}
 	pthread_mutex_unlock( &(p->mutex) );
 	return p;
