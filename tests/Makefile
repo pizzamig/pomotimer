@@ -19,6 +19,7 @@ run: build
 	./configTest | tee -a log
 	./pomodoroTest | tee -a log
 	./pomotimerTest | tee -a log
+	./trackerTest | tee -a log
 	@./travis-test-output.sh
 
 clean:
