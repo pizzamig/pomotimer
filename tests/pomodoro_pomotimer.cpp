@@ -20,6 +20,7 @@ public:
 	timeObs(std::mutex * shmtx, std::condition_variable * cv, uint32_t it=1500) :
 		time(it), mtx() , shmtx(shmtx), cv(cv) {}
 	virtual void notify( uint32_t t ) {
+		{ std::lock_guard<std::mutex> lock(*shmtx); }
 		{
 			std::lock_guard<std::mutex> lock(mtx);
 			time = t;
@@ -87,9 +88,10 @@ public:
 
 	void testPause()
 	{
-		fastPomo->start();
+
 		{ // wait 3 seconds
 			std::unique_lock<std::mutex> lk(timeMtx);
+			fastPomo->start();
 			timeCv.wait(lk,[this]{return (fastTo->getTime() == 17);});
 			fastPomo->pause();
 		}
