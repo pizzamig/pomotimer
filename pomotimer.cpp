@@ -88,7 +88,12 @@ pomotimer::Pomotimer::Pomotimer(Config &c)
 	ts.it_interval.tv_nsec = 0;
 	// TODO: the return code should be evaluated
 	timer_create( CLOCK_MONOTONIC, &se, &timerId );
+	// create the thread and wait its start
+	// to avoid race condition with the exit
+	pthread_mutex_lock( &mutex );
 	pthread_create( &tid, NULL, mainThread, this );
+	pthread_cond_wait( &cond, &mutex );
+	pthread_mutex_unlock( &mutex );
 }
 
 void*
@@ -96,6 +101,8 @@ pomotimer::Pomotimer::mainThread( void * arg )
 {
 	Pomotimer * p = static_cast<Pomotimer *>(arg);
 	pthread_mutex_lock( &(p->mutex) );
+	// signalling the constructor that I'm here and then wait for instructions
+	pthread_cond_signal( &(p->cond) );
 	while( true ) {
 		pthread_cond_wait( &(p->cond), &(p->mutex) );
 		if ( p->ns == EXIT ) {
@@ -124,6 +131,11 @@ pomotimer::Pomotimer::mainThread( void * arg )
 				break;
 		}
 		p->is = p->ns;
+		if( p->ns == STOP ) {
+				uint32_t newTime = p->pomo.getTime();
+				p->notifyAllObs( newTime );
+		}
+
 	}
 	pthread_mutex_unlock( &(p->mutex) );
 	return p;
