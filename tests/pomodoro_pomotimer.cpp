@@ -74,9 +74,9 @@ public:
 	void setUp()
 	{
 		pomo = new pomotimer::Pomotimer( defaultC );
-		shortC = new pomotimer::Config( 20,10,15,3 );
+		shortC = new pomotimer::Config( 12,10,11,3 );
 		fastPomo = new pomotimer::Pomotimer( *shortC );
-		fastTo = new timeObs( &timeMtx, &timeCv, 20 );
+		fastTo = new timeObs( &timeMtx, &timeCv, 12 );
 		fastTro = new timerObs( &timerMtx, &timerCv );
 		fastPomo->addObs( fastTo );
 		fastPomo->addObs( fastTro );
@@ -100,7 +100,7 @@ public:
 		{ // wait 3 seconds
 			std::unique_lock<std::mutex> lk(timeMtx);
 			fastPomo->start();
-			timeCv.wait(lk,[this]{return (fastTo->getTime() == 17);});
+			timeCv.wait(lk,[this]{return (fastTo->getTime() == 9);});
 			fastPomo->pause();
 		}
 		CPPUNIT_ASSERT( shortC->getFocus() != fastTo->getTime() );
@@ -114,8 +114,12 @@ public:
 
 	void testTimerNotification()
 	{
-		{ // wait 3 seconds
+		{
 			std::unique_lock<std::mutex> lk(timerMtx);
+			fastPomo->start();
+			timerCv.wait( lk );
+			CPPUNIT_ASSERT( pomotimer::TimerType::FOCUS == fastTro->getTimerType() );
+			fastPomo->pause();
 			fastPomo->start();
 			timerCv.wait( lk );
 			fastPomo->pause();
@@ -127,6 +131,13 @@ public:
 			timerCv.wait(lk);
 		}
 		CPPUNIT_ASSERT( pomotimer::TimerType::FOCUS == fastTro->getTimerType() );
+		{
+			std::unique_lock<std::mutex> lk(timerMtx);
+			fastPomo->start();
+			timerCv.wait( lk );
+			CPPUNIT_ASSERT( pomotimer::TimerType::FOCUS == fastTro->getTimerType() );
+			fastPomo->stop();
+		}
 	}
 	static CppUnit::TestSuite *suite()
 	{

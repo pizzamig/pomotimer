@@ -113,6 +113,7 @@ public:
 	/** Start or restart the timer.
 	 * This function starts the pomodoro timer.
 	 * There's no function difference between start and restart.
+	 * A start, when the timer is stopped, cause a timer type notification
 	 */
 	void start();
 	/** Stop the timer.
@@ -123,6 +124,7 @@ public:
 	/** Pause the timer.
 	 * This function stops the pomodoro timer, but leaving the status untouched.
 	 * No pomodoro reset occur in this case
+	 * @note if the timer type is not FOCUS, stop() can cause a timer type notification
 	 */
 	void pause();
 	/** Get the left time of the current timer (in seconds).

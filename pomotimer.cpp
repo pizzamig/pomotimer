@@ -117,6 +117,9 @@ pomotimer::Pomotimer::mainThread( void * arg )
 				p->ts.it_value.tv_sec = 1;
 				p->ts.it_interval.tv_sec = 1;
 				timer_settime( p->timerId, 0, &(p->ts), 0 );
+				if( p->is == STOP ) {
+					timerNotification = true;
+				}
 				break;
 			case STOP:
 				p->ts.it_value.tv_sec = 0;
