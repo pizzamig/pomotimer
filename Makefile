@@ -2,8 +2,8 @@ CXX?=clang++
 export LDFLAGS+=-lrt -lncurses -lpthread -L/usr/local/lib
 export CFLAGS+=-Wall -std=c++11 -g -O0
 
-SRCS=main.cpp pomotimer.cpp nctk.cpp
-HDRS=pomotimer.h observer.h nctk.h
+SRCS=main.cpp pomotimer.cpp nctk.cpp tracker.cpp
+HDRS=pomotimer.h observer.h nctk.h tracker.cpp
 
 all: pomotimer doc buildtests
 
