@@ -38,11 +38,19 @@ class timerObs : public utility::Observer< pomotimer::TimerType >
 private:
 	pomotimer::TimerType timerType;
 	std::mutex mtx;
+	std::mutex * shmtx;
+	std::condition_variable * cv;
 public:
-	timerObs(pomotimer::TimerType it=pomotimer::TimerType::FOCUS) : timerType(it) {}
+	timerObs(std::mutex * shmtx, std::condition_variable * cv,
+					 pomotimer::TimerType it=pomotimer::TimerType::FOCUS)
+		: timerType(it), mtx() , shmtx(shmtx), cv(cv) {}
 	virtual void notify( pomotimer::TimerType t ) {
-		std::lock_guard<std::mutex> lock(mtx);
-		timerType = t;
+		{ std::lock_guard<std::mutex> lock(*shmtx); }
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+			timerType = t;
+		}
+		cv->notify_one();
 	}
 	pomotimer::TimerType getTimerType() {
 		std::lock_guard<std::mutex> lock(mtx);
@@ -69,6 +77,7 @@ public:
 		shortC = new pomotimer::Config( 20,10,15,3 );
 		fastPomo = new pomotimer::Pomotimer( *shortC );
 		fastTo = new timeObs( &timeMtx, &timeCv, 20 );
+		fastTro = new timerObs( &timerMtx, &timerCv );
 		fastPomo->addObs( fastTo );
 		fastPomo->addObs( fastTro );
 	}
@@ -88,7 +97,6 @@ public:
 
 	void testPause()
 	{
-
 		{ // wait 3 seconds
 			std::unique_lock<std::mutex> lk(timeMtx);
 			fastPomo->start();
@@ -104,6 +112,22 @@ public:
 		CPPUNIT_ASSERT( shortC->getFocus() == fastTo->getTime() );
 	}
 
+	void testTimerNotification()
+	{
+		{ // wait 3 seconds
+			std::unique_lock<std::mutex> lk(timerMtx);
+			fastPomo->start();
+			timerCv.wait( lk );
+			fastPomo->pause();
+		}
+		CPPUNIT_ASSERT( pomotimer::TimerType::SHORT_BREAK == fastTro->getTimerType() );
+		{ // stop it, after a pause
+			std::unique_lock<std::mutex> lk(timerMtx);
+			fastPomo->stop();
+			timerCv.wait(lk);
+		}
+		CPPUNIT_ASSERT( pomotimer::TimerType::FOCUS == fastTro->getTimerType() );
+	}
 	static CppUnit::TestSuite *suite()
 	{
 		CppUnit::TestSuite *suiteConfig = new CppUnit::TestSuite( "PomotimerTest" );
@@ -111,6 +135,8 @@ public:
 			"testConstructor", &PomotimerTest::testConstructor )) ;
 		suiteConfig->addTest( new CppUnit::TestCaller< PomotimerTest > (
 			"testPause", &PomotimerTest::testPause )) ;
+		suiteConfig->addTest( new CppUnit::TestCaller< PomotimerTest > (
+			"testTimerNotification", &PomotimerTest::testTimerNotification )) ;
 		return suiteConfig;
 	}
 };
