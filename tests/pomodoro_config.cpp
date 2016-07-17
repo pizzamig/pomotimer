@@ -1,8 +1,3 @@
-// 	assertEquals( C1.getFocus(), 25*60 );
-// 	assertEquals( C1.getShortBreak(), 5*60 );
-// 	assertEquals( C1.getLongBreak(), 20*60 );
-// 	assertEquals( C1.getLoopSize(), 4 );
-
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
