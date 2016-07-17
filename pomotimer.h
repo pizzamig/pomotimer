@@ -106,7 +106,8 @@ public:
 	Pomotimer( Config & c );
 	/** The clean-up destructor.
 	 * The destructor is needed to clean-up all activities that were going on.
-	 * In particular, the desctructor waits that the main thread exits.
+	 * In particular, the desctructor stops all activities and waits that
+	 * the main thread exits.
 	 */
 	~Pomotimer();
 	/** Start or restart the timer.
