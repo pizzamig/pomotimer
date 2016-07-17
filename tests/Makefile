@@ -1,4 +1,5 @@
 LDFLAGS+=-lcppunit
+CFLAGS+=-coverage
 
 configTest: pomodoro_config.cpp ../pomotimer.cpp
 	$(CXX) $(CFLAGS) $(LDFLAGS) pomodoro_config.cpp ../pomotimer.cpp -o configTest
@@ -18,11 +19,13 @@ run: build
 	@rm -f log
 	./configTest | tee -a log
 	./pomodoroTest | tee -a log
-	./pomotimerTest | tee -a log
 	./trackerTest | tee -a log
+	./pomotimerTest | tee -a log
+	gcov pomodoro_pomotimer.cpp
 	@./travis-test-output.sh
 
 clean:
 	rm -f configTest pomodoroTest pomotimerTest trackerTest log
+	rm -f *.gcov *.gcda *.gcno
 
 .PHONY: build clean run
