@@ -41,7 +41,7 @@ void
 pomotimer::Pomodoro::update()
 {
 	std::lock_guard<std::mutex> lock(mtx);
-	if( time == 0 ) {
+	if( time == 1 ) {
 		// change the timer type
 		switch( type ) {
 			case TimerType::FOCUS:
@@ -64,8 +64,9 @@ pomotimer::Pomodoro::update()
 				time=localConfig.getFocus();
 				break;
 		}
+	} else {
+		--time;
 	}
-	--time;
 }
 
 pomotimer::Pomotimer::Pomotimer(Config &c)
