@@ -9,7 +9,10 @@ pomodoroTest: pomodoro_pomodoro.cpp ../pomotimer.cpp
 pomotimerTest: pomodoro_pomotimer.cpp ../pomotimer.cpp
 	$(CXX) $(CFLAGS) $(LDFLAGS) pomodoro_pomotimer.cpp ../pomotimer.cpp -o pomotimerTest
 
-build: configTest pomodoroTest pomotimerTest
+trackerTest: pomodoro_tracker.cpp ../tracker.cpp
+	$(CXX) $(CFLAGS) $(LDFLAGS) pomodoro_tracker.cpp ../tracker.cpp -o trackerTest
+
+build: configTest pomodoroTest pomotimerTest trackerTest
 
 run: build
 	@rm -f log
@@ -19,6 +22,6 @@ run: build
 	@./travis-test-output.sh
 
 clean:
-	rm -f configTest pomodoroTest pomotimerTest log
+	rm -f configTest pomodoroTest pomotimerTest trackerTest log
 
 .PHONY: build clean run
