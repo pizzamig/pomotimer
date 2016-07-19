@@ -3,7 +3,7 @@
 UUT=pomotimer.cpp
 UUTO=$(UUT:.cpp=.o)
 EXE=configTest
-SRCS=pomodoro_config.cpp
+SRCS=pomotimer_config.cpp
 OBJS=$(SRCS:.cpp=.o) $(UUTO)
 
 $(UUTO): ../../$(UUT)
@@ -18,7 +18,7 @@ $(EXE): $(OBJS) $(UUTO)
 $(UUT):
 	ln -s ../../$@
 
-pomodoro_config.cpp:
+%.cpp:
 	ln -s ../$@
 
 $(UUT).gcda: $(EXE)
