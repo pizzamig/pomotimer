@@ -35,7 +35,7 @@ run: build
 	./trackerTest | tee -a log
 	ln -s ../pomotimer.cpp
 	ln -s ../tracker.cpp
-	gcov pomotimer.cpp tracker.cpp
+	gcov *.cpp
 	@./travis-test-output.sh
 
 clean:
