@@ -21,14 +21,14 @@ $(UUT):
 %.cpp:
 	ln -s ../$@
 
-$(UUT).gcda: $(EXE)
+$(UUT:.cpp=.gcda): $(EXE)
 	./$(EXE)
 
 clean:
 	rm -f $(OBJS) *.gcno *.gcda *.gcov $(EXE)
 	rm -f $(SRCS) $(UUT)
 
-gcov: $(SRCS) $(UUT) $(UUT).gcda
+gcov: $(SRCS) $(UUT) $(UUT:.cpp=.gcda)
 	gcov $(SRCS) $(UUT)
 
 .PHONY: clean gcov 
