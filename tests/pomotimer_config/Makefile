@@ -1,0 +1,34 @@
+# Makefile for unittests
+
+UUT=pomotimer.cpp
+UUTO=$(UUT:.cpp=.o)
+EXE=configTest
+SRCS=pomodoro_config.cpp
+OBJS=$(SRCS:.cpp=.o) $(UUTO)
+
+$(UUTO): ../../$(UUT)
+	$(CXX) $(CFLAGS) -c ../../$(UUT) -o $(UUTO)
+
+%.o: ../%.cpp
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+$(EXE): $(OBJS) $(UUTO)
+	$(CXX) $(CFLAGS) $(LDFLAGS) $? -o $@
+
+$(UUT):
+	ln -s ../../$@
+
+pomodoro_config.cpp:
+	ln -s ../$@
+
+$(UUT).gcda: $(EXE)
+	./$(EXE)
+
+clean:
+	rm -f $(OBJS) *.gcno *.gcda *.gcov $(EXE)
+	rm -f $(SRCS) $(UUT)
+
+gcov: $(SRCS) $(UUT) $(UUT).gcda
+	gcov $(SRCS) $(UUT)
+
+.PHONY: clean gcov 
