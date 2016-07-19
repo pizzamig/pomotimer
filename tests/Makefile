@@ -1,35 +1,47 @@
 export LDFLAGS+=-lcppunit
 export CFLAGS+=-coverage
 
-configTest: pomotimer_config.cpp ../pomotimer.cpp
-	$(MAKE) -C pomotimer_config $@
+EXES=configTest pomodoroTest pomotimerTest trackerTest
+UUTS=pomotimer.cpp tracker.cpp
 
-pomodoroTest: pomotimer_pomodoro.cpp ../pomotimer.cpp
-	$(MAKE) -C pomotimer_pomodoro $@
+pomotimer.o: ../pomotimer.cpp
+	$(CXX) $(CFLAGS) -c $< -o $@
 
-pomotimerTest: pomotimer_pomotimer.cpp ../pomotimer.cpp
-	$(MAKE) -C pomotimer_pomotimer $@
+tracker.o: ../tracker.cpp
+	$(CXX) $(CFLAGS) -c $< -o $@
 
-trackerTest: pomotimer_tracker.cpp ../tracker.cpp
-	$(MAKE) -C pomotimer_tracker $@
+%.o: %.cpp
+	$(CXX) $(CFLAGS) -c $< -o $@
 
-build: configTest pomodoroTest pomotimerTest trackerTest
+configTest: pomotimer_config.o pomotimer.o
+	$(CXX) $(CFLAGS) $(LDFLAGS) $? -o $@
+
+pomodoroTest: pomotimer_pomodoro.o pomotimer.o
+	$(CXX) $(CFLAGS) $(LDFLAGS) $? -o $@
+
+pomotimerTest: pomotimer_pomotimer.o pomotimer.o
+	$(CXX) $(CFLAGS) $(LDFLAGS) $? -o $@
+
+trackerTest: pomotimer_tracker.o tracker.o
+	$(CXX) $(CFLAGS) $(LDFLAGS) $? -o $@
+
+build: $(EXES)
 
 run: build
 	@rm -f log
-	./pomotimer_config/configTest | tee -a log
-	./pomotimer_pomodoro/pomodoroTest | tee -a log
-	./pomotimer_pomotimer/pomotimerTest | tee -a log
-	./pomotimer_tracker/trackerTest | tee -a log
-	$(MAKE) -C pomotimer_config gcov
-	$(MAKE) -C pomotimer_pomodoro gcov
-	$(MAKE) -C pomotimer_pomotimer gcov
-	$(MAKE) -C pomotimer_tracker gcov
+	./configTest | tee -a log
+	./pomodoroTest | tee -a log
+	./pomotimerTest | tee -a log
+	./trackerTest | tee -a log
+	ln -s ../pomotimer.cpp
+	ln -s ../tracker.cpp
+	gcov pomotimer.cpp tracker.cpp
 	@./travis-test-output.sh
 
 clean:
-	rm -f log
+	rm -f log $(EXES) *.o
 	rm -f *.gcov *.gcda *.gcno
+	rm -f pomotimer.cpp tracker.cpp
 	$(MAKE) -C pomotimer_config clean
 	$(MAKE) -C pomotimer_pomodoro clean
 	$(MAKE) -C pomotimer_pomotimer clean
