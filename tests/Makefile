@@ -42,7 +42,7 @@ run: build
 	./trackerTest | tee -a log
 
 gcov: run $(UUTS)
-	gcov *.cpp
+	gcov -b *.cpp
 	@./travis-test-output.sh
 
 clean:
