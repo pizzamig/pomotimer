@@ -56,6 +56,17 @@ protected:
 		std::for_each( observers.begin(), observers.end(),
 					[t](Obs *o) { if( o != nullptr ) o->notify(t); } );
 	}
+	/** Removing all observer.
+	 * This function clear the internal observers registry.
+	 * All previously registered observer will be not notified anymore.
+	 * The function is thread-safe.
+	 */
+	void removeAllObs()
+	{
+		std::lock_guard<std::mutex> lock(mtx);
+		observers.clear();
+	}
+
 private:
 	std::vector< Obs * > observers;
 	std::mutex mtx;
