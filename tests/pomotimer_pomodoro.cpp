@@ -3,8 +3,6 @@
 #include <cppunit/TestCaller.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include <string>
-
 #include "../pomotimer.h"
 
 class PomodoroTest : public CppUnit::TestFixture {
@@ -26,6 +24,7 @@ public:
 		delete fastPomo;
 		delete shortC;
 	}
+
 	void testConstructor()
 	{
 		CPPUNIT_ASSERT( pomo->getTimerType() == pomotimer::TimerType::FOCUS );
@@ -57,6 +56,7 @@ public:
 		CPPUNIT_ASSERT( fastPomo->getTimerType() == pomotimer::TimerType::FOCUS );
 		CPPUNIT_ASSERT( fastPomo->getTime() == shortC->getFocus() );
 	}
+
 	void testUpdateShort()
 	{
 		for( uint32_t k=0; k<shortC->getLoopSize()-1; k++ ) {
@@ -84,6 +84,7 @@ public:
 		CPPUNIT_ASSERT( fastPomo->getTimerType() == pomotimer::TimerType::FOCUS );
 		CPPUNIT_ASSERT( fastPomo->getTime() == shortC->getFocus() );
 	}
+
 	void testUpdateDefault()
 	{
 		for( uint32_t k=0; k<defaultC.getLoopSize()-1; k++ ) {
@@ -111,6 +112,7 @@ public:
 		CPPUNIT_ASSERT( pomo->getTimerType() == pomotimer::TimerType::FOCUS );
 		CPPUNIT_ASSERT( pomo->getTime() == defaultC.getFocus() );
 	}
+
 	void testUpdateLoops()
 	{
 		for( int j=0; j<5; ++j ) {
@@ -140,6 +142,7 @@ public:
 			CPPUNIT_ASSERT( pomo->getTime() == defaultC.getFocus() );
 		}
 	}
+
 	static CppUnit::TestSuite *suite()
 	{
 		CppUnit::TestSuite *suiteConfig = new CppUnit::TestSuite( "PomodoroTest" );
@@ -159,7 +162,6 @@ public:
 
 int main()
 {
-	
 	CppUnit::TextUi::TestRunner runner;
 	runner.addTest( PomodoroTest::suite() );
 	runner.run( );

@@ -3,8 +3,6 @@
 #include <cppunit/TestCaller.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include <string>
-
 #include "../pomotimer.h"
 
 class ConfigTest : public CppUnit::TestFixture {
@@ -29,7 +27,6 @@ public:
 		delete wrongC2;
 		delete wrongC3;
 		delete wrongC4;
-		
 	}
 	void testConstructor()
 	{
@@ -90,7 +87,6 @@ public:
 
 int main()
 {
-	
 	CppUnit::TextUi::TestRunner runner;
 	runner.addTest( ConfigTest::suite() );
 	runner.run( );

@@ -139,6 +139,7 @@ public:
 			fastPomo->stop();
 		}
 	}
+
 	static CppUnit::TestSuite *suite()
 	{
 		CppUnit::TestSuite *suiteConfig = new CppUnit::TestSuite( "PomotimerTest" );
@@ -154,7 +155,6 @@ public:
 
 int main()
 {
-	
 	CppUnit::TextUi::TestRunner runner;
 	runner.addTest( PomotimerTest::suite() );
 	runner.run( );
