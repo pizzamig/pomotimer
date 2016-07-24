@@ -16,3 +16,5 @@ addons:
 script: make all && make test
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+notifications:
+  slack: pomotimer:dJgJzGxgZJ6z6rzGEwTcdh8M
