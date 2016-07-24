@@ -1,10 +1,11 @@
 export LDFLAGS+=-lcppunit
 export CFLAGS+=-coverage
 
-UNITS=config pomodoro pomotimer tracker
-TEST_SRCS=$(UNITS:%=pomotimer_%.cpp)
+PUNITS=config pomodoro pomotimer tracker
+UUNITS=observer
+TEST_SRCS=$(PUNITS:%=pomotimer_%.cpp) $(UUNITS:%=utility_%.cpp)
 TEST_OBJS=$(UNITS:%=pomotimer_%.o)
-EXES=$(UNITS:=Test)
+EXES=$(PUNITS:=Test) $(UUNITS:=Test)
 UUTS=pomotimer.cpp tracker.cpp
 UUTO=$(UUTS:%.cpp=%.o)
 
@@ -32,6 +33,9 @@ pomotimerTest: pomotimer_pomotimer.o pomotimer.o
 trackerTest: pomotimer_tracker.o tracker.o
 	$(CXX) $(CFLAGS) $(LDFLAGS) $? -o $@
 
+observerTest: utility_observer.o
+	$(CXX) $(CFLAGS) $(LDFLAGS) $? -o $@
+
 build: $(EXES)
 
 run: build
@@ -40,6 +44,7 @@ run: build
 	./pomodoroTest | tee -a log
 	./pomotimerTest | tee -a log
 	./trackerTest | tee -a log
+	./observerTest | tee -a log
 
 gcov: run $(UUTS)
 	gcov -b *.cpp
