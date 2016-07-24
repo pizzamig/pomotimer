@@ -6,6 +6,7 @@ TEST_SRCS=$(UNITS:%=pomotimer_%.cpp)
 TEST_OBJS=$(UNITS:%=pomotimer_%.o)
 EXES=$(UNITS:=Test)
 UUTS=pomotimer.cpp tracker.cpp
+UUTO=$(UUTS:%.cpp=%.o)
 
 pomotimer.o: ../pomotimer.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
@@ -48,6 +49,6 @@ clean:
 	rm -f log $(EXES)
 	rm -f $(TEST_OBJS)
 	rm -f *.gcov *.gcda *.gcno
-	rm -f pomotimer.cpp tracker.cpp
+	rm -f $(UUTO) $(UUTS)
 
 .PHONY: build clean run gcov
