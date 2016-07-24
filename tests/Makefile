@@ -1,7 +1,10 @@
 export LDFLAGS+=-lcppunit
 export CFLAGS+=-coverage
 
-EXES=configTest pomodoroTest pomotimerTest trackerTest
+UNITS=config pomodoro pomotimer tracker
+TEST_SRCS=$(UNITS:%=pomotimer_%.cpp)
+TEST_OBJS=$(UNITS:%=pomotimer_%.o)
+EXES=$(UNITS:=Test)
 UUTS=pomotimer.cpp tracker.cpp
 
 pomotimer.o: ../pomotimer.cpp
@@ -12,6 +15,9 @@ tracker.o: ../tracker.cpp
 
 %.o: %.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
+
+%.cpp:
+	ln -s ../$@
 
 configTest: pomotimer_config.o pomotimer.o
 	$(CXX) $(CFLAGS) $(LDFLAGS) $? -o $@
@@ -33,18 +39,15 @@ run: build
 	./pomodoroTest | tee -a log
 	./pomotimerTest | tee -a log
 	./trackerTest | tee -a log
-	ln -s ../pomotimer.cpp
-	ln -s ../tracker.cpp
+
+gcov: run $(UUTS)
 	gcov *.cpp
 	@./travis-test-output.sh
 
 clean:
-	rm -f log $(EXES) *.o
+	rm -f log $(EXES)
+	rm -f $(TEST_OBJS)
 	rm -f *.gcov *.gcda *.gcno
 	rm -f pomotimer.cpp tracker.cpp
-	$(MAKE) -C pomotimer_config clean
-	$(MAKE) -C pomotimer_pomodoro clean
-	$(MAKE) -C pomotimer_pomotimer clean
-	$(MAKE) -C pomotimer_tracker clean
 
-.PHONY: build clean run configTest
+.PHONY: build clean run gcov

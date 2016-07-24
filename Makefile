@@ -22,6 +22,6 @@ buildtests:
 	$(MAKE) -C tests build
 
 test:
-	$(MAKE) -C tests run
+	$(MAKE) -C tests gcov
 	
 .PHONY: all clean doc tests
