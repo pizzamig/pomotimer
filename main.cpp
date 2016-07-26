@@ -12,20 +12,26 @@ class ncTimeObs : public utility::Observer< uint32_t >
 {
 private:
 	WINDOW * w;
+	uint32_t last;
 public:
-	ncTimeObs( WINDOW * win ) : w(win) {
+	ncTimeObs( WINDOW * win ) : w(win), last(0) {
 	}
-	virtual void notify( uint32_t t )
+	void draw()
 	{
 		int y,x;
 		getmaxyx(w,y,x);
 		y = y/2;
 		wmove(w,y,0);
 		wclrtoeol(w);
-		utility::Time tm(t);
+		utility::Time tm(last);
 		std::string s=tm.getTimeStr();
 		mvwprintw(w,y,(x-s.length())/2,"%s", s.c_str());
 		wrefresh(w);
+	}
+	virtual void notify( uint32_t t )
+	{
+		last=t;
+		draw();
 	}
 };
 
@@ -33,9 +39,10 @@ class ncTTypeObs : public utility::Observer< pomotimer::TimerType >
 {
 private:
 	WINDOW * w;
+	pomotimer::TimerType last;
 public:
-	ncTTypeObs(WINDOW * win) : w(win) {}
-	virtual void notify ( pomotimer::TimerType t )
+	ncTTypeObs(WINDOW * win) : w(win), last(pomotimer::TimerType::FOCUS) {}
+	void draw()
 	{
 		int y,x;
 		getmaxyx(w,y,x);
@@ -43,7 +50,7 @@ public:
 		wmove(w,y,0);
 		wclrtoeol(w);
 		std::string * s;
-		switch ( t ) {
+		switch ( last ) {
 			case pomotimer::TimerType::FOCUS:
 				s = new std::string("FOCUS");
 				break;
@@ -58,6 +65,11 @@ public:
 		wrefresh(w);
 		delete s;
 	}
+	virtual void notify ( pomotimer::TimerType t )
+	{
+		last = t;
+		draw();
+	}
 };
 
 WINDOW * createTopWin()
@@ -65,9 +77,16 @@ WINDOW * createTopWin()
 	WINDOW * localWin;
 	int height=(LINES-2)/2;
 	int width=COLS;
-	int starty=0;
-	localWin = newwin(height,width, starty, 0);
+	localWin = newwin(height,width, 0, 0);
 	return localWin;
+}
+
+void resizeTopWin(WINDOW * w)
+{
+	int height=(LINES-2)/2;
+	int width=COLS;
+	wresize(w, height, width);
+	wclear(w);
 }
 
 WINDOW * createBottomWin()
@@ -80,6 +99,16 @@ WINDOW * createBottomWin()
 	return localWin;
 }
 
+void resizeBottomWin( WINDOW * w )
+{
+	int height=(LINES-2)/2;
+	int width=COLS;
+	int starty=LINES/2;
+	mvwin(w, starty, 0 );
+	wresize(w, height, width);
+	wclear(w);
+}
+
 WINDOW * createStatusWin()
 {
 	WINDOW * localWin;
@@ -87,10 +116,17 @@ WINDOW * createStatusWin()
 	return localWin;
 }
 
+void resizeStatusWin( WINDOW * w )
+{
+	mvwin(w, LINES-1, 0 );
+	wresize( w, 1, COLS );
+	wclear(w);
+}
+
 void
 initStatusWin( WINDOW * w )
 {
-	mvwprintw(w,0,0, "s to start, p to pause, t to stop, q to quit" );
+	mvwprintw(w,0,0, "s to start, p to pause, t to stop, q to quit (%d,%d)", COLS,LINES );
 	wrefresh( w );
 }
 
@@ -127,6 +163,17 @@ int main()
 		int c;
 		c=getch();
 		switch( c ) {
+			case KEY_RESIZE:
+				erase();
+				refresh();
+				resizeTopWin(topWin);
+				mvhline( (LINES-2)/2, 0, '-', COLS );
+				resizeBottomWin(bottomWin);
+				resizeStatusWin(statusWin);
+				timeSlot.draw();
+				typeSlot.draw();
+				initStatusWin(statusWin);
+				break;
 			case 's':
 				tomato->start();
 				break;
