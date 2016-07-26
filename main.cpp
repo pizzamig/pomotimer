@@ -87,11 +87,18 @@ initStatusWin( WINDOW * w )
 	wrefresh( w );
 }
 
+#define MINCOLS 50
+#define MINLINES 4
 int main()
 {
 	pomotimer::Config config(6,2,4,2); // short times, for testing
 	auto * tomato = new pomotimer::Pomotimer(config);
 	nctk::Application app;
+	if( LINES < MINLINES || COLS < MINCOLS ) {
+		printw("windows to small"); refresh();
+		getch();
+		return 0;
+	}
 	WINDOW * topWin; // time
 	WINDOW * bottomWin; // timer type
 	WINDOW * statusWin;
