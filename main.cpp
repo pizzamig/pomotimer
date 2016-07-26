@@ -1,6 +1,7 @@
 #include "pomotimer.h"
 #include "observer.h"
 #include "nctk.h"
+#include "time.h"
 #include <unistd.h>
 #include <ncurses.h>
 
@@ -11,19 +12,19 @@ class ncTimeObs : public utility::Observer< uint32_t >
 {
 private:
 	WINDOW * w;
-// 	int x;
-// 	int y;
 public:
 	ncTimeObs( WINDOW * win ) : w(win) {
-// 		int row, cols;
 	}
 	virtual void notify( uint32_t t )
 	{
-		wmove(w,0,0);
+		int y,x;
+		getmaxyx(w,y,x);
+		y = y/2;
+		wmove(w,y,0);
 		wclrtoeol(w);
-// 		string s;
-		mvwprintw(w,0,0,"%u", t);
-// 		printw("Time to end is %u\n", t );
+		utility::Time tm(t);
+		std::string s=tm.getTimeStr();
+		mvwprintw(w,y,(x-s.length())/2,"%s", s.c_str());
 		wrefresh(w);
 	}
 };
@@ -36,20 +37,26 @@ public:
 	ncTTypeObs(WINDOW * win) : w(win) {}
 	virtual void notify ( pomotimer::TimerType t )
 	{
-		wmove(w,0,0);
+		int y,x;
+		getmaxyx(w,y,x);
+		y = y/2;
+		wmove(w,y,0);
 		wclrtoeol(w);
+		std::string * s;
 		switch ( t ) {
 			case pomotimer::TimerType::FOCUS:
-				mvwprintw(w,0,0,"FOCUS");
+				s = new std::string("FOCUS");
 				break;
 			case pomotimer::TimerType::SHORT_BREAK:
-				mvwprintw(w,0,0,"SHORT BREAK");
+				s = new std::string("SHORT BREAK");
 				break;
 			case pomotimer::TimerType::LONG_BREAK:
-				mvwprintw(w,0,0,"LONG BREAK");
+				s = new std::string("LONG BREAK");
 				break;
 		}
+		mvwprintw(w,y,(x-s->length())/2,s->c_str());
 		wrefresh(w);
+		delete s;
 	}
 };
 
