@@ -8,6 +8,7 @@ namespace utility {
 	public:
 		Time(uint32_t seconds);
 		std::string getTimeStr();
+		static uint32_t maxTime;
 	private:
 		uint32_t s;
 	};
