@@ -1,7 +1,7 @@
 #include "time.h"
 #include <cstdio>
 
-uint32_t utility::Time::maxTime=(24*60*60)-1;
+const uint32_t utility::Time::maxTime=(24*60*60)-1;
 
 utility::Time::Time(uint32_t seconds) :
 	s(seconds)
