@@ -35,7 +35,6 @@ namespace pomotimer {
 		 */
 		virtual void notify( TimerType t );
 	private:
-		Pomotimer & pt;
 		// counters
 		uint32_t started;
 		uint32_t finished;

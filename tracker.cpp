@@ -1,7 +1,7 @@
 #include "tracker.h"
 
 pomotimer::Tracker::Tracker(pomotimer::Pomotimer &p) :
-	pt( p ), started(0), finished(0), mtx()
+	started(0), finished(0), mtx()
 {
 	p.addObs( this );
 }
