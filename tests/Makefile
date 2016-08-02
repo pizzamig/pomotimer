@@ -1,6 +1,7 @@
 export LDFLAGS+=-lcppunit
 export CFLAGS+=-coverage
 
+GCOV?=gcov
 PUNITS=config pomodoro pomotimer tracker
 UUNITS=observer time
 TEST_SRCS=$(PUNITS:%=pomotimer_%.cpp) $(UUNITS:%=utility_%.cpp)
@@ -54,7 +55,7 @@ run: build
 	./timeTest | tee -a log
 
 gcov: run $(UUTS)
-	gcov -c *.cpp
+	$(GCOV) -c *.cpp
 	@./travis-test-output.sh
 
 clean:
