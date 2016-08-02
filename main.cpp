@@ -126,7 +126,7 @@ void resizeStatusWin( WINDOW * w )
 void
 initStatusWin( WINDOW * w )
 {
-	mvwprintw(w,0,0, "s to start, p to pause, t to stop, q to quit (%d,%d)", COLS,LINES );
+	mvwprintw(w,0,0, "s to start, p to pause, t to stop, q to quit" );
 	wrefresh( w );
 }
 
