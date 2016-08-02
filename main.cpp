@@ -136,10 +136,13 @@ int main()
 {
 	pomotimer::Config config; // short times, for testing
 	auto * tomato = new pomotimer::Pomotimer(config);
-	nctk::Application app;
-	if( LINES < MINLINES || COLS < MINCOLS ) {
-		printw("windows to small"); refresh();
-		getch();
+	nctk::Size minSize(MINLINES,MINCOLS);
+	nctk::Application * app;
+	try {
+		app = new nctk::Application(minSize);
+	}
+	catch (nctk::Exception e ) {
+		nctk::Fatal f(e);
 		return 0;
 	}
 	WINDOW * topWin; // time
@@ -192,6 +195,7 @@ int main()
 			break;
 	}
 	delete tomato;
+	delete app;
 	return 0;
 }
 
