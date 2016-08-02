@@ -4,7 +4,7 @@ export CFLAGS+=-coverage
 PUNITS=config pomodoro pomotimer tracker
 UUNITS=observer time
 TEST_SRCS=$(PUNITS:%=pomotimer_%.cpp) $(UUNITS:%=utility_%.cpp)
-TEST_OBJS=$(UNITS:%=pomotimer_%.o)
+TEST_OBJS=$(TEST_SRCS:%.cpp=%.o)
 EXES=$(PUNITS:=Test) $(UUNITS:=Test)
 UUTS=pomotimer.cpp tracker.cpp time.cpp
 UUTO=$(UUTS:%.cpp=%.o)
