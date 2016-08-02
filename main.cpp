@@ -134,7 +134,7 @@ initStatusWin( WINDOW * w )
 #define MINLINES 4
 int main()
 {
-	pomotimer::Config config(6,2,4,2); // short times, for testing
+	pomotimer::Config config; // short times, for testing
 	auto * tomato = new pomotimer::Pomotimer(config);
 	nctk::Application app;
 	if( LINES < MINLINES || COLS < MINCOLS ) {
