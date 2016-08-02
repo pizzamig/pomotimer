@@ -54,7 +54,7 @@ run: build
 	./timeTest | tee -a log
 
 gcov: run $(UUTS)
-	gcov -b *.cpp
+	gcov -c *.cpp
 	@./travis-test-output.sh
 
 clean:
