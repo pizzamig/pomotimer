@@ -14,7 +14,7 @@ template< typename T >
 class Observer
 {
 public:
-	/** The abstract notify function
+	/** The abstract notify function.
 	 * This function has to be implemented in the concrete Observer
 	 * in order to be invoked by the Observable
 	 */
