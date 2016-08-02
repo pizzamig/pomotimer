@@ -15,7 +15,7 @@ all: pomotimer doc buildtests
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 pomotimer: $(OBJS)
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(OBJS) -o pomotimer
+	$(CXX) $(CFLAGS) $(LDFLAGS) $(OBJS) -o pomotimer $(LDFLAGS)
 
 clean:
 	rm -f pomotimer
