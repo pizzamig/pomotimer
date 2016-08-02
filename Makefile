@@ -4,15 +4,23 @@ export CFLAGS+=-Wall -std=c++11 -g -O0
 
 SRCS=main.cpp pomotimer.cpp nctk.cpp tracker.cpp time.cpp
 HDRS=pomotimer.h observer.h nctk.h tracker.h time.h
+OBJS=$(SRCS:%.cpp=%.o)
 
 all: pomotimer doc buildtests
 
-pomotimer: $(SRCS) $(HDRS)
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(SRCS) -o pomotimer
+%.o: %.cpp %.h
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+pomotimer: $(OBJS)
+	$(CXX) $(CFLAGS) $(LDFLAGS) $(OBJS) -o pomotimer
 
 clean:
 	rm -f pomotimer
 	rm -rf html
+	rm -f $(OBJS)
 	$(MAKE) -C tests clean
 
 doc: $(SRCS) $(HDRS)
