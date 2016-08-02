@@ -25,22 +25,22 @@ time.o: ../time.cpp
 	ln -s ../$@
 
 configTest: pomotimer_config.o pomotimer.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 pomodoroTest: pomotimer_pomodoro.o pomotimer.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 pomotimerTest: pomotimer_pomotimer.o pomotimer.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 trackerTest: pomotimer_tracker.o tracker.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 observerTest: utility_observer.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 timeTest: utility_time.o time.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 build: $(EXES)
 
