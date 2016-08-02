@@ -1,5 +1,5 @@
 CXX?=clang++
-export LDFLAGS+=-lrt -lncurses -lpthread -L/usr/local/lib
+export LDFLAGS+=-L/usr/local/lib -lrt -lncurses -lpthread
 export CFLAGS+=-Wall -std=c++11 -g -O0
 
 SRCS=main.cpp pomotimer.cpp nctk.cpp tracker.cpp time.cpp
