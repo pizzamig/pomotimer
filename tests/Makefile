@@ -1,5 +1,14 @@
 export LDFLAGS+=-lcppunit
-export CXXFLAGS+=-coverage -I/usr/local/include
+export CXXFLAGS+=-I/usr/local/include
+
+#CXXFLAGS+=-fsanitize=address -fsanitize-coverage=edge
+ifeq (clang, $(COMPILER))
+# 	CXXFLAGS+=-fsanitize=address
+# 	ENVDEF="ASAN_OPTIONS=coverage=1"
+else
+	CXXFLAGS+=-coverage
+	ENVDEF=
+endif
 
 GCOV?=gcov
 PUNITS=config pomodoro pomotimer tracker
@@ -55,7 +64,9 @@ run: build
 	./timeTest | tee -a log
 
 gcov: run $(UUTS)
+ifneq (clang, $(COMPILER))
 	$(GCOV) -c *.cpp
+endif
 	@./travis-test-output.sh
 
 clean:

@@ -6,6 +6,18 @@ SRCS=main.cpp pomotimer.cpp nctk.cpp tracker.cpp time.cpp
 HDRS=pomotimer.h observer.h nctk.h tracker.h time.h
 OBJS=$(SRCS:%.cpp=%.o)
 
+COMPILER!=	$(CXX) --version | head -n 1
+ifeq (, $(strip $(filter clang,$(COMPILER))) )
+	ifeq (, $(strip $(filter g++,$(COMPILER)), g++ ) )
+		CXX=$(error Compiler $(COMPILER) not supported)
+	else
+		COMPILER=g++
+	endif
+else
+	COMPILER=clang
+endif
+export COMPILER
+
 all: pomotimer doc buildtests
 
 %.o: %.cpp %.h
