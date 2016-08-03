@@ -1,5 +1,5 @@
 export LDFLAGS+=-lcppunit
-export CFLAGS+=-coverage
+export CXXFLAGS+=-coverage -I/usr/local/include
 
 GCOV?=gcov
 PUNITS=config pomodoro pomotimer tracker
@@ -11,37 +11,37 @@ UUTS=pomotimer.cpp tracker.cpp time.cpp
 UUTO=$(UUTS:%.cpp=%.o)
 
 pomotimer.o: ../pomotimer.cpp
-	$(CXX) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 tracker.o: ../tracker.cpp
-	$(CXX) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 time.o: ../time.cpp
-	$(CXX) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %.o: %.cpp
-	$(CXX) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %.cpp:
 	ln -s ../$@
 
 configTest: pomotimer_config.o pomotimer.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 pomodoroTest: pomotimer_pomodoro.o pomotimer.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 pomotimerTest: pomotimer_pomotimer.o pomotimer.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 trackerTest: pomotimer_tracker.o tracker.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 observerTest: utility_observer.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 timeTest: utility_time.o time.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(LDFLAGS) -o $@
 
 build: $(EXES)
 
