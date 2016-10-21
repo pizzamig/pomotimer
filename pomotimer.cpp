@@ -73,6 +73,8 @@ pomotimer::Pomotimer::Pomotimer(Config &c)
 	: is(STOP), ns(STOP), conf(c), pomo( conf ), tid( 0 )
 {
 	mutex = PTHREAD_MUTEX_INITIALIZER;
+	// TODO: the return code should be evaluated
+	pthread_cond_init(&cond, NULL );
 	/*
 	Set the sigevent structure to cause the signal to be
 	delivered by creating a new thread.
@@ -184,6 +186,7 @@ pomotimer::Pomotimer::~Pomotimer()
 	pthread_cond_signal( &cond );
 	pthread_mutex_unlock( &mutex );
 	pthread_join( tid, nullptr );
+	pthread_cond_destroy( &cond );
 }
 
 void
